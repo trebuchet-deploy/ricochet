@@ -32,6 +32,11 @@ Execute: ricochet
 
 After executing it, it'll be running on port 5000. It currently has no authentication.
 
+Demo
+----
+
+See a demo at: http://trebuchet.wmflabs.org
+
 Getting Help
 ------------
 
