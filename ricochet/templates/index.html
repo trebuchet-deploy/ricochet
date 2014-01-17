@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en" ng-app="ricochetApp">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ricochet - Deployment Status</title>
+  <link rel="stylesheet" href="static/css/bootstrap.min.css">
+  <link rel="stylesheet" href="static/css/bootstrap-theme.min.css">
+  <link rel="stylesheet" href="static/css/ricochet.css">
+  <script src="static/lib/angular/angular.min.js"></script>
+  <!--<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular.min.js"></script>-->
+  <script src="static/js/controllers.js"></script>
+</head>
+<body ng-controller="RicochetCtrl">
+  <div class="container">
+    <div class="navbar navbar-default" role="navigation">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">Ricochet</a>
+      </div>
+      <div class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+        </ul>
+      </div><!--/.nav-collapse -->
+    </div>
+    <div class="row">
+       <div class="col-sm-4">
+         <h2>Repos</h2>
+         <div class="btn-group-vertical">
+           <button type="button" class="btn btn-default {{repo.active}}" ng-repeat="(name, repo) in repos" ng-click="toggleRepo(repo)">{{name}}</button>
+         </div>
+       </div>
+       <div class="container">
+         <div class="col-sm-8">
+           <div class="row" ng-repeat="(name, repo) in repos">
+             <div ng-show="repo.active">
+               <h3>
+                 <a href="#" ng-click="refreshRepo(repo)"><span class="glyphicon glyphicon-refresh"></span></a>
+                 {{name}}
+                 <small ng-show="repo.deploy_data.tag">Current tag: {{repo.deploy_data.tag}}</small>
+               </h3>
+               <h5 ng-show="repo.lock_data.user">
+                 <span class="glyphicon glyphicon-warning-sign"></span>
+                 {{repo.lock_data.user}} started a deploy at {{repo.lock_data.time}}
+               </h5>
+               <table class="table table-striped">
+                 <thead>
+                   <tr>
+                     <th>Minion</th>
+                     <th>Fetch status</th>
+                     <th>Checkout status</th>
+                   </tr>
+                 </thead>
+                 <tbody>
+                   <tr ng-repeat="(minion, minion_data) in repo.minion_data">
+                     <td>{{minion}}</td>
+                     <td>
+                       <span class="glyphicon glyphicon-ok-circle" ng-show="minion_data.fetch_timestamp > repo.deploy_data.time && minion_data.fetch_status == 0"></span>
+                       <span class="glyphicon glyphicon-remove-circle" ng-hide="minion_data.fetch_timestamp > repo.deploy_data.time && minion_data.fetch_status == 0"></span>
+                     </td>
+                     <td>
+                       <span class="glyphicon glyphicon-ok-circle" ng-show="minion_data.tag == repo.deploy_data.tag"></span>
+                       <span class="glyphicon glyphicon-remove-circle" ng-hide="minion_data.tag == repo.deploy_data.tag"></span>
+                     </td>
+                   </tr>
+                 </tbody>
+               </table>
+             </div>
+           </div>
+         </div>
+       </div>
+    </div>
+  </div>
+</body>
+</html>
