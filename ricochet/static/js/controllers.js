@@ -2,25 +2,7 @@
 
 var ricochetApp = angular.module('ricochetApp', []);
 
-ricochetApp.factory('ricochetService', function($http) {
-   return {
-        getRepoList: function() {
-            return $http.get('/repolist')
-                .then(function(result) {
-                    return result.data;
-                });
-        },
-        getRepo: function(repoName) {
-            var url = '/repo/' + repoName;
-            return $http.get(url)
-                .success(function(result) {
-                    return result.data;
-                });
-        }
-   }
-});
-
-ricochetApp.controller('RicochetCtrl', function ($scope, $log, $http) {
+ricochetApp.controller('RicochetCtrl', function ($scope, $timeout, $log, $http) {
     $scope.repos = {};
     var repoListCallback = function(repoList) {
         var repos = new Object();
@@ -35,9 +17,13 @@ ricochetApp.controller('RicochetCtrl', function ($scope, $log, $http) {
     $http.get('/repolist').success(repoListCallback);
 
     $scope.toggleRepo = function(repo) {
+        var timer;
         if (repo.active) {
+            clearInterval($scope.repos[repo.name].timer);
             $scope.repos[repo.name].active = '';
+            $scope.repos[repo.name].paused = true;
         } else {
+            // Gross. Fix this code duplication with a factory.
             $http.get('/repo/' + repo.name, {})
                 .success(function(data) {
                     $log.error(data);
@@ -46,20 +32,34 @@ ricochetApp.controller('RicochetCtrl', function ($scope, $log, $http) {
                     $scope.repos[repo.name].deploy_data = data.deploy_data;
                     $scope.repos[repo.name].lock_data = data.lock_data;
                     $scope.repos[repo.name].active = 'active';
+                    $scope.repos[repo.name].paused = true;
                 });
+            $scope.repos[repo.name].func = function() {
+                    $http.get('/repo/' + repo.name, {})
+                        .success(function(data) {
+                            $log.error(data);
+                            $scope.repos[repo.name].name = repo.name;
+                            $scope.repos[repo.name].minion_data = data.minion_data;
+                            $scope.repos[repo.name].deploy_data = data.deploy_data;
+                            $scope.repos[repo.name].lock_data = data.lock_data;
+                            $scope.repos[repo.name].active = 'active';
+                            $scope.repos[repo.name].paused = true;
+                        });
+                };
+            $scope.repos[repo.name].timer = setInterval($scope.repos[repo.name].func, 2000);
+            $scope.repos[repo.name].paused = false;
         }
     }
 
-    $scope.refreshRepo = function(repo) {
-        $http.get('/repo/' + repo.name, {})
-            .success(function(data) {
-                $log.error(data);
-                $scope.repos[repo.name].name = repo.name;
-                $scope.repos[repo.name].minion_data = data.minion_data;
-                $scope.repos[repo.name].deploy_data = data.deploy_data;
-                $scope.repos[repo.name].lock_data = data.lock_data;
-                $scope.repos[repo.name].active = 'active';
-            });
+    $scope.toggleRefresh = function(repo) {
+        if ($scope.repos[repo.name].paused) {
+            clearInterval($scope.repos[repo.name].timer);
+            $scope.repos[repo.name].paused = false;
+        } else {
+            clearInterval($scope.repos[repo.name].timer);
+            $scope.repos[repo.name].timer = setInterval($scope.repos[repo.name].func, 2000);
+            $scope.repos[repo.name].paused = true;
+        }
     }
     $scope.debugLog = function(data) {
         $log.error(data);

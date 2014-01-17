@@ -8,7 +8,6 @@
   <link rel="stylesheet" href="static/css/bootstrap-theme.min.css">
   <link rel="stylesheet" href="static/css/ricochet.css">
   <script src="static/lib/angular/angular.min.js"></script>
-  <!--<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular.min.js"></script>-->
   <script src="static/js/controllers.js"></script>
 </head>
 <body ng-controller="RicochetCtrl">
@@ -32,7 +31,7 @@
     </div>
     <div class="row">
        <div class="col-sm-4">
-         <h2>Repos</h2>
+         <h3>Repositories</h3>
          <div class="btn-group-vertical">
            <button type="button" class="btn btn-default {{repo.active}}" ng-repeat="(name, repo) in repos" ng-click="toggleRepo(repo)">{{name}}</button>
          </div>
@@ -42,13 +41,13 @@
            <div class="row" ng-repeat="(name, repo) in repos">
              <div ng-show="repo.active">
                <h3>
-                 <a href="#" ng-click="refreshRepo(repo)"><span class="glyphicon glyphicon-refresh"></span></a>
+                 <span ng-click="toggleRefresh(repo)"><span class="glyphicon glyphicon-refresh" ng-hide="repo.paused"></span><span class="glyphicon glyphicon-pause" ng-show="repo.paused"></span></span>
                  {{name}}
                  <small ng-show="repo.deploy_data.tag">Current tag: {{repo.deploy_data.tag}}</small>
                </h3>
                <h5 ng-show="repo.lock_data.user">
                  <span class="glyphicon glyphicon-warning-sign"></span>
-                 {{repo.lock_data.user}} started a deploy at {{repo.lock_data.time}}
+                 {{repo.lock_data.user}} started a deploy at {{repo.lock_data.time * 1000 | date:'yyyy-MM-dd HH:mm:ss'}}
                </h5>
                <table class="table table-striped">
                  <thead>
