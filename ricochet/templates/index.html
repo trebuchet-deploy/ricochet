@@ -26,10 +26,17 @@
         <ul class="nav navbar-nav">
         </ul>
         <ul class="nav navbar-nav navbar-right">
+            <li ng-hide="user.fullname"><a href="/login">Login</a></li>
+            <p ng-show="user.fullname" class="navbar-text">Signed in as {{user.fullname}} (<a href="#" ng-click="logout()" class="navbar-link">Logout</a>)</p>
         </ul>
       </div><!--/.nav-collapse -->
     </div>
-    <div class="row">
+    <div class="row" ng-hide="authorized">
+      <div class="container">
+        <p>Please login to view deployment information.</p>
+      </div>
+    </div>
+    <div class="row" ng-show="authorized">
        <div class="col-sm-4">
          <h3>Repositories</h3>
          <div class="btn-group-vertical">
