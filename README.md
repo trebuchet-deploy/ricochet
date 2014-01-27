@@ -35,6 +35,7 @@ Configuration is handled via a flask configuration file, which can be defined
 via the RICOCHET_SETTINGS environment variable. Here's the available
 configuration and its defaults:
 
+```python
 app.config.update(
     CSRF_ENABLED = True,
     DEBUG = True,
@@ -54,6 +55,7 @@ app.config.update(
     },
     DEPLOY_DIR = '/srv/deployment'
 )
+```
 
 Usage
 -----
