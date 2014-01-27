@@ -3,12 +3,22 @@
 var ricochetApp = angular.module('ricochetApp', []);
 
 ricochetApp.controller('RicochetCtrl', function ($scope, $timeout, $log, $http, $location) {
+    $scope.auth_required = true;
     $scope.authorized = true;
     $scope.user = {};
-    $http.get('/user').success(function(data) {
-        $log.error(data);
-        $scope.user = data;
-    });
+    $http.get('/auth/info').success(function(data) {
+        $scope.auth_required = data['auth_required'];
+        })
+    if ($scope.auth_required) {
+        $http.get('/user').success(function(data) {
+            $scope.user = data;
+            })
+            .error(function(data, status) {
+                if (status == '401') {
+                    $scope.authorized = false;
+                }
+            });
+    }
     $scope.repos = {};
     $http.get('/repolist').success(function(data, status) {
             var repos = new Object();
@@ -27,9 +37,10 @@ ricochetApp.controller('RicochetCtrl', function ($scope, $timeout, $log, $http, 
             });
 
     $scope.logout = function() {
-        $http.get('/logout', {})
+        $http.get('/auth/logout', {})
             .success(function(data) {
                 $scope.user = data;
+                $scope.authorized = false;
                 });
     };
 
@@ -43,7 +54,6 @@ ricochetApp.controller('RicochetCtrl', function ($scope, $timeout, $log, $http, 
             // Gross. Fix this code duplication with a factory.
             $http.get('/repo/' + repo.name, {})
                 .success(function(data) {
-                    $log.error(data);
                     $scope.repos[repo.name].name = repo.name;
                     $scope.repos[repo.name].minion_data = data.minion_data;
                     $scope.repos[repo.name].deploy_data = data.deploy_data;
@@ -54,7 +64,6 @@ ricochetApp.controller('RicochetCtrl', function ($scope, $timeout, $log, $http, 
             $scope.repos[repo.name].func = function() {
                     $http.get('/repo/' + repo.name, {})
                         .success(function(data) {
-                            $log.error(data);
                             $scope.repos[repo.name].name = repo.name;
                             $scope.repos[repo.name].minion_data = data.minion_data;
                             $scope.repos[repo.name].deploy_data = data.deploy_data;
@@ -86,6 +95,5 @@ ricochetApp.controller('RicochetCtrl', function ($scope, $timeout, $log, $http, 
     }
 
     $scope.debugLog = function(data) {
-        $log.error(data);
     }
 });
