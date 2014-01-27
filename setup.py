@@ -13,21 +13,19 @@
 
 from setuptools import setup, find_packages
 
-setup(
-    name = "TrebuchetRicochet",
-    version = "0.1",
-    packages = find_packages(),
-    install_requires = ['Flask==0.10.1', 'redis>=2.9.0'],
+setup(name="TrebuchetRicochet",
+      version="0.2",
+      packages=find_packages(),
+      install_requires=['Flask>=0.8', 'redis>=2.4.9'],
 
-    author="Ryan Lane",
-    author_email="ryan@ryandlane.com",
-    description="A web interface to trebuchet.",
-    license="apache2",
-    url="https://github.com/trebuchet-deploy/ricochet",
+      author="Ryan Lane",
+      author_email="ryan@ryandlane.com",
+      description="A web interface to trebuchet.",
+      license="apache2",
+      url="https://github.com/trebuchet-deploy/ricochet",
 
-    entry_points = {
-        'console_scripts': [
-            'ricochet = ricochet.runserver:main',
-        ],
-    },
-)
+      entry_points={
+          'console_scripts': [
+              'ricochet = ricochet.runserver:main',
+          ],
+      })
