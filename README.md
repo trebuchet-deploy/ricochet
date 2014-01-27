@@ -6,10 +6,18 @@ Trebuchet web interface
 Requirements
 ------------
 
-* redis>=2.9.0
-* Flask==0.10.1
+* Flask>=0.8
+* redis>=2.4.9
 
-Ricochet isn't usable without trebuchet. It's a web interface that 
+If OpenID authentication is needed:
+
+* Flask-OpenID==1.1.1
+* openid-redis==1.0
+* python-openid==2.2.5
+
+Ricochet isn't usable without trebuchet. It's a web interface that interacts
+with trebuchet. It currently reads from the redis store that trebuchet writes
+to.
 
 Installation
 ------------
@@ -23,19 +31,42 @@ sudo pip install TrebuchetRicochet
 Configuration
 -------------
 
-This version of ricochet is a hackathon prototype. It has a lot of hardcoded requirements and no configuration.
+Configuration is handled via a flask configuration file, which can be defined
+via the RICOCHET_SETTINGS environment variable. Here's the available
+configuration and its defaults:
+
+app.config.update(
+    CSRF_ENABLED = True,
+    DEBUG = True,
+    SECRET_KEY = 'development key',
+    REQUIRE_AUTH = False,
+    BACKEND = 'redis',
+    REDIS = {
+        'host': 'localhost',
+        'port': 6379,
+        'password': None,
+        'db': 0
+    },
+    AUTH_BACKEND = 'openid',
+    OPENID_FORCED_PROVIDER = 'https://www.google.com/accounts/o8/id',
+    OPENID_PROVIDERS = {
+        'google': 'https://www.google.com/accounts/o8/id'
+    },
+    DEPLOY_DIR = '/srv/deployment'
+)
 
 Usage
 -----
 
-Execute: ricochet
+Execute: runserver.py
 
-After executing it, it'll be running on port 5000. It currently has no authentication.
+After executing it, it'll be running on port 5000.
 
 Demo
 ----
 
-See a demo at: http://trebuchet.wmflabs.org
+See a demo at: http://trebuchet.wmflabs.org (authentication support disabled
+there).
 
 Getting Help
 ------------
