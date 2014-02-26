@@ -1,7 +1,7 @@
 ricochet
 =======
 
-Trebuchet web interface
+A web interface for [Trebuchet](https://github.com/trebuchet-deploy/trebuchet).
 
 Requirements
 ------------
