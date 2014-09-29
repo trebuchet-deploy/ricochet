@@ -16,7 +16,8 @@ from setuptools import setup, find_packages
 setup(name="TrebuchetRicochet",
       version="0.2",
       packages=find_packages(),
-      install_requires=['Flask>=0.8', 'redis>=2.4.9'],
+      install_requires=['Flask>=0.8', 'redis>=2.4.9', 'openid-redis>=1.1',
+                        'boto>=2.29'],
 
       author="Ryan Lane",
       author_email="ryan@ryandlane.com",
